@@ -11,40 +11,40 @@ import React, {
 } from 'react';
 import { timer } from 'rxjs';
 import { debounce } from 'rxjs/operators';
-import { DocumentDefinition } from './models/document-definition.model';
-import { MappingDefinition } from './models/mapping-definition.model';
-import { DocumentManagementService } from './services/document-management.service';
-import { ErrorHandlerService } from './services/error-handler.service';
-import { FieldActionService } from './services/field-action.service';
-import { FileManagementService } from './services/file-management.service';
-import { InitializationService } from './services/initialization.service';
-import { MappingManagementService } from './services/mapping-management.service';
-import { search } from './utils/filter-fields';
+import { DocumentDefinition } from '../models/document-definition.model';
+import { MappingDefinition } from '../models/mapping-definition.model';
+import { DocumentManagementService } from '../services/document-management.service';
+import { ErrorHandlerService } from '../services/error-handler.service';
+import { FieldActionService } from '../services/field-action.service';
+import { FileManagementService } from '../services/file-management.service';
+import { InitializationService } from '../services/initialization.service';
+import { MappingManagementService } from '../services/mapping-management.service';
+import { search } from '../utils/filter-fields';
 import {
   fromDocumentDefinitionToFieldGroup,
   fromMappingDefinitionToIMappings,
   IAtlasmapFieldWithField,
-} from './utils/to-ui-models-util';
+} from '../utils/to-ui-models-util';
 import {
   addToCurrentMapping,
   createMapping,
-} from './components/field/field-util';
+} from '../components/field/field-util';
 import {
   deleteAtlasFile,
   toggleMappingPreview,
   exportAtlasFile,
   importAtlasFile,
   resetAtlasmap,
-  documentExists, toggleShowUnmappedFields, toggleShowMappedFields,
-} from './components/toolbar/toolbar-util';
+  documentExists,
+  toggleShowUnmappedFields,
+  toggleShowMappedFields,
+} from '../components/toolbar/toolbar-util';
 import {
   FieldAction,
   FieldActionDefinition,
   Multiplicity,
-} from './models/field-action.model';
-import { MappedField } from './models/mapping.model';
-import { Field } from './models/field.model';
-import { TransitionMode } from './models/transition.model';
+} from '../models/field-action.model';
+import { TransitionMode, TransitionModel } from '../models/transition.model';
 
 const api = ky.create({ headers: { 'ATLASMAP-XSRF-TOKEN': 'awesome' } });
 
@@ -224,7 +224,7 @@ export function useAtlasmapSources(filter?: string) {
       sourceDocs
         .map(fromDocumentDefinitionToFieldGroup)
         .filter(d => d) as IAtlasmapDocument[],
-    [sourceDocs, filter]
+    [sourceDocs]
   );
 }
 
@@ -245,7 +245,7 @@ export function useAtlasmapTargets(filter?: string) {
       targetDocs
         .map(fromDocumentDefinitionToFieldGroup)
         .filter(d => d) as IAtlasmapDocument[],
-    [targetDocs, filter]
+    [targetDocs]
   );
 }
 
@@ -317,16 +317,26 @@ export function useAtlasmap() {
     (mapping: any) => {
       if (mapping.transition.mode === TransitionMode.ONE_TO_MANY) {
         return initializationService.cfg.fieldActionService.getActionsAppliesToField(
-          mapping, true, Multiplicity.ONE_TO_MANY);
+          mapping,
+          true,
+          Multiplicity.ONE_TO_MANY
+        );
       } else if (mapping.transition.mode === TransitionMode.MANY_TO_ONE) {
         return initializationService.cfg.fieldActionService.getActionsAppliesToField(
-          mapping, true, Multiplicity.MANY_TO_ONE);
+          mapping,
+          true,
+          Multiplicity.MANY_TO_ONE
+        );
       } else {
         return [];
       }
     },
     [initializationService]
   );
+
+  const getMultiplicityActionDelimiters = useCallback(() => {
+    return TransitionModel.delimiterModels;
+  }, []);
 
   const handleActionChange = useCallback(
     (action: FieldAction, definition: FieldActionDefinition) => {
@@ -370,6 +380,7 @@ export function useAtlasmap() {
       documentExists,
       getMappingActions,
       getMultiplicityActions,
+      getMultiplicityActionDelimiters,
       handleActionChange,
     }),
     [
@@ -382,6 +393,7 @@ export function useAtlasmap() {
       onFieldPreviewChange,
       getMappingActions,
       getMultiplicityActions,
+      getMultiplicityActionDelimiters,
       handleActionChange,
     ]
   );

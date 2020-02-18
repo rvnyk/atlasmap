@@ -1,6 +1,7 @@
 import React, {
   FunctionComponent,
   HTMLAttributes,
+  SVGProps,
   useEffect,
   useState,
 } from 'react';
@@ -12,8 +13,7 @@ const styles = StyleSheet.create({
   foreignObject: { overflow: 'visible' },
 });
 
-export interface ICanvasObjectProps
-  extends HTMLAttributes<SVGForeignObjectElement> {
+export interface ICanvasObjectProps extends SVGProps<SVGForeignObjectElement> {
   id: string;
   width: number;
   height: number;
