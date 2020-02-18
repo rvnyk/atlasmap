@@ -38,7 +38,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -397,7 +397,7 @@ public class AtlasEndpoint extends ResourceEndpoint {
     private void populateTargetDocuments(AtlasSession session, Exchange exchange) {
         Message outMessage = exchange.getOut();
         outMessage.setHeaders(exchange.getIn().getHeaders());
-        outMessage.setAttachments(exchange.getIn().getAttachments());
+        //outMessage.setAttachments(exchange.getIn().getAttachments());
 
         if (session.getMapping().getDataSource() == null) {
             return;
